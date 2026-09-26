@@ -12,7 +12,7 @@ struct MetricView: View {
                 .foregroundStyle(.secondary)
                 .textCase(.uppercase)
             Text(value)
-                .font(.rounded(.title3))
+                .font(.display(.title3, weight: .semibold))
                 .monospacedDigit()
         }
         .accessibilityElement(children: .combine)

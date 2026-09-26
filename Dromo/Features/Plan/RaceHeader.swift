@@ -37,7 +37,7 @@ struct RaceHeader: View {
         case 1...:
             HStack(alignment: .firstTextBaseline, spacing: 10) {
                 Text(days, format: .number)
-                    .font(.system(size: countdownSize, weight: .bold, design: .rounded))
+                    .font(.system(size: countdownSize, weight: .heavy).width(.expanded))
                 Text(days == 1 ? "day to race" : "days to race")
                     .font(.title3.weight(.medium))
                     .foregroundStyle(.secondary)
@@ -45,7 +45,7 @@ struct RaceHeader: View {
             .accessibilityElement(children: .combine)
         default:
             Text(days == 0 ? "Race day" : "Finished")
-                .font(.system(size: countdownSize * 0.75, weight: .bold, design: .rounded))
+                .font(.system(size: countdownSize * 0.75, weight: .heavy).width(.expanded))
         }
     }
 

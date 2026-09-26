@@ -14,7 +14,7 @@ struct UpNextCard: View {
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(workout.date == .today ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
                     Text(workout.title)
-                        .font(.title3.weight(.semibold))
+                        .font(.display(.title3))
                 }
                 Spacer(minLength: 0)
                 StatusIcon(status: status)

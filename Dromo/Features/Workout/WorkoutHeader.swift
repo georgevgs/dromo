@@ -21,7 +21,7 @@ struct WorkoutHeader: View {
             }
 
             Text(workout.title)
-                .font(.largeTitle.bold())
+                .font(.display(.largeTitle))
 
             HStack(alignment: .firstTextBaseline, spacing: 28) {
                 MetricView(title: "Time", value: "≈ \(DurationText.approximate(workout.estimatedSeconds))")

@@ -21,9 +21,9 @@ enum Theme {
 }
 
 extension Font {
-    /// Numbers in SF Pro Rounded, as in Apple Fitness.
-    static func rounded(_ style: Font.TextStyle, weight: Font.Weight = .semibold) -> Font {
-        .system(style, design: .rounded, weight: weight)
+    /// SF Pro Expanded, for the numbers and titles that carry the brand.
+    static func display(_ style: Font.TextStyle, weight: Font.Weight = .bold) -> Font {
+        .system(style, weight: weight).width(.expanded)
     }
 }
 

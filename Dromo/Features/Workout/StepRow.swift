@@ -13,7 +13,7 @@ struct StepRow: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(segment.goal.text)
-                    .font(.rounded(.headline))
+                    .font(.headline)
                     .monospacedDigit()
                 Text(segment.effortText)
                     .font(.subheadline)
