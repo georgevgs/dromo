@@ -126,7 +126,7 @@ struct WorkoutDetailView: View {
                 if !watch.isSupported {
                     "No paired Apple Watch found."
                 } else if watch.isDenied {
-                    "Sub-25 isn't allowed to schedule workouts. You can allow it in Settings."
+                    "Dromo isn't allowed to schedule workouts. You can allow it in Settings."
                 } else {
                     "The system didn't accept the workout. Pull to refresh on the plan and try again."
                 }

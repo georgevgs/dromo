@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5B25000000000000000000E1"
-               BuildableName = "Sub25.app"
-               BlueprintName = "Sub25"
-               ReferencedContainer = "container:Sub25.xcodeproj">
+               BuildableName = "Dromo.app"
+               BlueprintName = "Dromo"
+               ReferencedContainer = "container:Dromo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5B25000000000000000000E2"
-               BuildableName = "Sub25Tests.xctest"
-               BlueprintName = "Sub25Tests"
-               ReferencedContainer = "container:Sub25.xcodeproj">
+               BuildableName = "DromoTests.xctest"
+               BlueprintName = "DromoTests"
+               ReferencedContainer = "container:Dromo.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5B25000000000000000000E1"
-            BuildableName = "Sub25.app"
-            BlueprintName = "Sub25"
-            ReferencedContainer = "container:Sub25.xcodeproj">
+            BuildableName = "Dromo.app"
+            BlueprintName = "Dromo"
+            ReferencedContainer = "container:Dromo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5B25000000000000000000E1"
-            BuildableName = "Sub25.app"
-            BlueprintName = "Sub25"
-            ReferencedContainer = "container:Sub25.xcodeproj">
+            BuildableName = "Dromo.app"
+            BlueprintName = "Dromo"
+            ReferencedContainer = "container:Dromo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

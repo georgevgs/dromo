@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct Sub25App: App {
+struct DromoApp: App {
     @State private var store = PlanStore()
     @State private var watch = WatchSchedule()
 

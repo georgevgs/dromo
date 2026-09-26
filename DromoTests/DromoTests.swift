@@ -2,7 +2,7 @@ import Foundation
 import HealthKit
 import Testing
 import WorkoutKit
-@testable import Sub25
+@testable import Dromo
 
 // The rules that, if broken, would silently put the wrong workout on the Watch.
 
