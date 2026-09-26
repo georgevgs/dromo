@@ -23,7 +23,7 @@ struct WorkoutHeader: View {
             Text(workout.title)
                 .font(.display(.largeTitle))
 
-            HStack(alignment: .firstTextBaseline, spacing: 28) {
+            HStack(alignment: .firstTextBaseline, spacing: 24) {
                 MetricView(title: "Time", value: "≈ \(DurationText.approximate(workout.estimatedSeconds))")
                 MetricView(title: "Distance", value: "≈ \(DistanceText.kilometers(workout.estimatedMeters))")
                 if pacedSeconds > 0 {

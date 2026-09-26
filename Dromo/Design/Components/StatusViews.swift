@@ -24,8 +24,8 @@ struct Chip: View {
             .font(.subheadline.weight(.medium))
             .monospacedDigit()
             .foregroundStyle(tint)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 5)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 4)
             .background(tint.opacity(0.12), in: .capsule)
     }
 }

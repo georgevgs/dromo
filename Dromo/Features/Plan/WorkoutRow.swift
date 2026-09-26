@@ -12,7 +12,7 @@ struct WorkoutRow: View {
             SessionBadge(SessionType(workout))
 
             VStack(alignment: .leading, spacing: 2) {
-                HStack(spacing: 6) {
+                HStack(spacing: 8) {
                     Text(workout.title)
                         .font(.body.weight(.medium))
                         .foregroundStyle(status == .missed ? .secondary : .primary)

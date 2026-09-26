@@ -6,7 +6,7 @@ struct UpNextCard: View {
     let status: WorkoutStatus
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 12) {
                 SessionBadge(SessionType(workout), size: 44)
                 VStack(alignment: .leading, spacing: 2) {
@@ -30,7 +30,7 @@ struct UpNextCard: View {
             .font(.subheadline)
             .foregroundStyle(.secondary)
         }
-        .padding(.vertical, 6)
+        .padding(.vertical, 8)
     }
 
     /// "Today", "Tomorrow", "Thu 1 Oct" — with the start time when it matters.

@@ -12,7 +12,7 @@ struct PlanProgress: View {
     let weeks: [[Session]]
 
     var body: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: 8) {
             ForEach(weeks.indices, id: \.self) { week in
                 HStack(spacing: 2) {
                     ForEach(weeks[week]) { session in

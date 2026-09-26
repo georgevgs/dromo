@@ -8,7 +8,7 @@ struct RaceHeader: View {
     @ScaledMetric(relativeTo: .largeTitle) private var countdownSize: CGFloat = 64
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 18) {
+        VStack(alignment: .leading, spacing: 16) {
             Text(eyebrow)
                 .font(.caption.weight(.semibold))
                 .tracking(1)
@@ -18,13 +18,13 @@ struct RaceHeader: View {
 
             PlanProgress(weeks: progress)
 
-            HStack(alignment: .firstTextBaseline, spacing: 28) {
+            HStack(alignment: .firstTextBaseline, spacing: 24) {
                 MetricView(title: "Goal", value: DurationText.minutesSeconds(plan.goalTimeSeconds))
                 MetricView(title: "Pace", value: "\(DurationText.minutesSeconds(plan.goalPaceSecondsPerKm))/km")
                 MetricView(title: week.title, value: week.value)
             }
         }
-        .padding(.vertical, 10)
+        .padding(.vertical, 8)
         .foregroundStyle(.white)
         // Hierarchical styles such as .secondary resolve for the dark background in either appearance.
         .environment(\.colorScheme, .dark)
@@ -35,7 +35,7 @@ struct RaceHeader: View {
         let days = PlanDate.today.days(until: plan.raceDate)
         switch days {
         case 1...:
-            HStack(alignment: .firstTextBaseline, spacing: 10) {
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
                 Text(days, format: .number)
                     .font(.system(size: countdownSize, weight: .heavy).width(.expanded))
                 Text(days == 1 ? "day to race" : "days to race")

@@ -98,7 +98,7 @@ struct PlanView: View {
         if !watch.isSupported {
             Text("No paired Apple Watch found.")
         } else if watch.isDenied {
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 8) {
                 Text("Dromo isn't allowed to schedule workouts on your Apple Watch.")
                 Button("Allow in Settings") {
                     openURL(URL(string: UIApplication.openSettingsURLString)!)

@@ -18,7 +18,7 @@ struct EditWorkoutView: View {
             Form {
                 Section {
                     StructureChart(workout: draft, height: 48)
-                        .padding(.vertical, 6)
+                        .padding(.vertical, 8)
                 } footer: {
                     Text("≈ \(DurationText.approximate(draft.estimatedSeconds)) · ≈ \(DistanceText.kilometers(draft.estimatedMeters))")
                 }
