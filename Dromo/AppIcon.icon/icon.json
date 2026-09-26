@@ -1,8 +1,8 @@
 {
   "fill": {
     "linear-gradient": [
-      "display-p3:0.13,0.36,0.78,1.00000",
-      "display-p3:0.03,0.10,0.27,1.00000"
+      "extended-srgb:0.42,0.28,1.00,1.00000",
+      "extended-srgb:0.12,0.08,0.31,1.00000"
     ],
     "orientation": {
       "start": {
@@ -23,6 +23,11 @@
           "name": "Run",
           "image-name": "4-run.svg",
           "glass": true
+        },
+        {
+          "name": "Goal",
+          "image-name": "3-goal.svg",
+          "glass": true
         }
       ],
       "shadow": {
@@ -37,19 +42,6 @@
     {
       "name": "Dial",
       "layers": [
-        {
-          "name": "Goal",
-          "image-name": "3-goal.svg",
-          "glass": true,
-          "fill-specializations": [
-            {
-              "appearance": "dark",
-              "value": {
-                "solid": "display-p3:1.0,1.0,1.0,1.00000"
-              }
-            }
-          ]
-        },
         {
           "name": "Crown",
           "image-name": "2-crown.svg",
