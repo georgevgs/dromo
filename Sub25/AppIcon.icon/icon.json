@@ -1,0 +1,101 @@
+{
+  "fill": {
+    "linear-gradient": [
+      "display-p3:0.13,0.36,0.78,1.00000",
+      "display-p3:0.03,0.10,0.27,1.00000"
+    ],
+    "orientation": {
+      "start": {
+        "x": 0.5,
+        "y": 0.0
+      },
+      "stop": {
+        "x": 0.5,
+        "y": 1.0
+      }
+    }
+  },
+  "groups": [
+    {
+      "name": "Run",
+      "layers": [
+        {
+          "name": "Run",
+          "image-name": "4-run.svg",
+          "glass": true
+        }
+      ],
+      "shadow": {
+        "kind": "layer-color",
+        "opacity": 0.5
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.15
+      }
+    },
+    {
+      "name": "Dial",
+      "layers": [
+        {
+          "name": "Goal",
+          "image-name": "3-goal.svg",
+          "glass": true,
+          "fill-specializations": [
+            {
+              "appearance": "dark",
+              "value": {
+                "solid": "display-p3:1.0,1.0,1.0,1.00000"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crown",
+          "image-name": "2-crown.svg",
+          "glass": true,
+          "opacity": 0.9,
+          "fill-specializations": [
+            {
+              "appearance": "dark",
+              "value": {
+                "solid": "display-p3:1.0,1.0,1.0,1.00000"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Dial",
+          "image-name": "1-dial.svg",
+          "glass": true,
+          "opacity": 0.35,
+          "opacity-specializations": [
+            {
+              "appearance": "dark",
+              "value": 0.5
+            }
+          ],
+          "fill-specializations": [
+            {
+              "appearance": "dark",
+              "value": {
+                "solid": "display-p3:1.0,1.0,1.0,1.00000"
+              }
+            }
+          ]
+        }
+      ],
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.5
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.4
+      }
+    }
+  ],
+  "supported-platforms": {
+    "squares": "shared"
+  }
+}
