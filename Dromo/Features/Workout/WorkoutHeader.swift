@@ -34,7 +34,7 @@ struct WorkoutHeader: View {
             HStack(spacing: 8) {
                 Chip(title: status.title, systemImage: status.symbol ?? "calendar", tint: status.tint)
                 if workout.isCheckpoint {
-                    Chip(title: "Checkpoint", systemImage: "flag.checkered", tint: .quality)
+                    Chip(title: "Checkpoint", systemImage: "flag.checkered", tint: .effortInk)
                 }
             }
         }

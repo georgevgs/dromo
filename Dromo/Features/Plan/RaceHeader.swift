@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// The race at a glance — countdown, goal and progress through the plan — on the Aegean night of the app icon.
+/// The race at a glance — countdown, goal and progress through the plan — under the Golden Hour sky of the app icon.
 struct RaceHeader: View {
     let plan: TrainingPlan
     let progress: [[PlanProgress.Session]]

@@ -78,7 +78,7 @@ struct PlanView: View {
                    systemImage: status == .completed ? "arrow.uturn.backward" : "checkmark") {
                 store.setCompleted(workout, status != .completed)
             }
-            .tint(.green)
+            .tint(.done)
         }
     }
 

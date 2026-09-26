@@ -19,7 +19,7 @@ struct WorkoutRow: View {
                     if workout.isCheckpoint {
                         Image(systemName: "flag.checkered")
                             .font(.caption)
-                            .foregroundStyle(.quality)
+                            .foregroundStyle(.effortInk)
                             .accessibilityLabel("Fitness checkpoint")
                     }
                 }

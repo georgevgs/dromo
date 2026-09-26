@@ -1,17 +1,23 @@
 import SwiftUI
 
-/// The Sub-25 look, in one place. Every colour means one thing, everywhere:
+/// Dromo's Golden Hour look: the race starts at 17:00 in November, as the sun sets over Athens.
+/// Every colour means one thing, everywhere:
 ///
-/// - **Aegean blue** — the accent colour. The brand, and everything you can tap.
-/// - **Sunset coral** (`quality`) — effort you're held to: Watch pace alerts.
-/// - **Olive** (`easy`) — running by feel: easy runs, warm-ups, cool-downs, strides.
-/// - **Laurel gold** (`race`) — race day.
+/// - **Dusk violet** — the accent colour. Everything you can tap.
+/// - **Sunset** (`effort`; `effortInk` for text) — effort you're held to: Watch pace alerts.
+/// - **Sea glass** (`easy`, `easyMuted`) — running by feel: easy runs, strides, warm-ups, cool-downs.
+/// - **Gold** (`race`) — race day.
 ///
-/// The colours live in the asset catalog with dark and increased-contrast variants, all WCAG AA.
-/// Blue dial and coral run: the same pair as the app icon.
+/// Colours live in the asset catalog with dark and increased-contrast variants, all WCAG AA.
+/// The full system is Dromo Design, in Claude Design.
 enum Theme {
-    /// The race header's Aegean night, matching the app icon.
-    static let hero = LinearGradient(colors: [.heroTop, .heroBottom], startPoint: .topLeading, endPoint: .bottomTrailing)
+    /// The race header: a dusk sky with the sun setting in its corner, like the app icon.
+    static var hero: some View {
+        LinearGradient(colors: [.heroTop, .heroBottom], startPoint: .top, endPoint: .bottom)
+            .overlay {
+                RadialGradient(colors: [.heroGlow.opacity(0.7), .clear], center: .topTrailing, startRadius: 0, endRadius: 280)
+            }
+    }
 }
 
 extension Font {
@@ -35,9 +41,14 @@ extension SessionType {
     var tint: Color {
         switch self {
         case .easy, .strides: .easy
-        case .intervals, .steady: .quality
+        case .intervals, .steady: .effort
         case .race: .race
         }
+    }
+
+    /// The symbol's colour on its tile: white, except dark ink on gold.
+    var symbolColor: Color {
+        self == .race ? .onRace : .white
     }
 }
 
@@ -45,10 +56,10 @@ extension WorkoutSegment.Kind {
     /// This kind of running's colour in structure charts and step rows.
     var tint: Color {
         switch self {
-        case .warmup, .cooldown: .easy.opacity(0.6)
+        case .warmup, .cooldown: .easyMuted
         case .easy, .stride: .easy
-        case .recovery: .gray.opacity(0.45)
-        case .work: .quality
+        case .recovery: .recovery
+        case .work: .effort
         case .race: .race
         }
     }
@@ -77,7 +88,7 @@ extension WorkoutStatus {
         switch self {
         case .upcoming, .missed: .secondary
         case .onWatch: .accentColor
-        case .completed: .green
+        case .completed: .done
         }
     }
 }

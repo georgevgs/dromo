@@ -13,7 +13,7 @@ struct SessionBadge: View {
     var body: some View {
         Image(systemName: type.symbol)
             .font(.system(size: size * 0.48, weight: .semibold))
-            .foregroundStyle(.white)
+            .foregroundStyle(type.symbolColor)
             .frame(width: size, height: size)
             .background(type.tint.gradient, in: .rect(cornerRadius: size * 0.3, style: .continuous))
             // Like Settings icons, tiles keep their light colours in Dark Mode so the white symbol keeps its contrast.
