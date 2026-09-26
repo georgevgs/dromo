@@ -23,7 +23,7 @@ struct WorkoutHeader: View {
             Text(workout.title)
                 .font(.display(.largeTitle))
 
-            HStack(alignment: .firstTextBaseline, spacing: 24) {
+            AdaptiveStack(alignment: .firstTextBaseline, spacing: 24) {
                 MetricView(title: "Time", value: "≈ \(DurationText.approximate(workout.estimatedSeconds))")
                 MetricView(title: "Distance", value: "≈ \(DistanceText.kilometers(workout.estimatedMeters))")
                 if pacedSeconds > 0 {
@@ -31,7 +31,7 @@ struct WorkoutHeader: View {
                 }
             }
 
-            HStack(spacing: 8) {
+            AdaptiveStack(spacing: 8) {
                 Chip(title: status.title, systemImage: status.symbol ?? "calendar", tint: status.tint)
                 if workout.isCheckpoint {
                     Chip(title: "Checkpoint", systemImage: "flag.checkered", tint: .effortInk)

@@ -106,7 +106,9 @@ struct WorkoutDetailView: View {
                 .buttonStyle(.glass)
             }
             .controlSize(.large)
+            .accessibilityShowsLargeContentViewer()
         }
+        .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
         .padding(.horizontal)
         .padding(.bottom, 8)
     }

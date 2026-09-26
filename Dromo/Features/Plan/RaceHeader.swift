@@ -18,7 +18,7 @@ struct RaceHeader: View {
 
             PlanProgress(weeks: progress)
 
-            HStack(alignment: .firstTextBaseline, spacing: 24) {
+            AdaptiveStack(alignment: .firstTextBaseline, spacing: 24) {
                 MetricView(title: "Goal", value: DurationText.minutesSeconds(plan.goalTimeSeconds))
                 MetricView(title: "Pace", value: "\(DurationText.minutesSeconds(plan.goalPaceSecondsPerKm))/km")
                 MetricView(title: week.title, value: week.value)
@@ -35,9 +35,11 @@ struct RaceHeader: View {
         let days = PlanDate.today.days(until: plan.raceDate)
         switch days {
         case 1...:
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
+            AdaptiveStack(alignment: .firstTextBaseline, spacing: 8) {
                 Text(days, format: .number)
                     .font(.system(size: countdownSize, weight: .heavy).width(.expanded))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
                 Text(days == 1 ? "day to race" : "days to race")
                     .font(.title3.weight(.medium))
                     .foregroundStyle(.secondary)

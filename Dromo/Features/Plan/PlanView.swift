@@ -7,6 +7,7 @@ struct PlanView: View {
     @Environment(WatchSchedule.self) private var watch
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.openURL) private var openURL
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var isSyncing = false
     @State private var syncNote: String?
@@ -88,7 +89,7 @@ struct PlanView: View {
         Button("Sync to Apple Watch", systemImage: "arrow.triangle.2.circlepath") {
             Task { await sync() }
         }
-        .symbolEffect(.rotate, isActive: isSyncing)
+        .symbolEffect(.rotate, isActive: isSyncing && !reduceMotion)
         .buttonStyle(.glassProminent)
         .disabled(isSyncing || !watch.isSupported || watch.isDenied)
     }

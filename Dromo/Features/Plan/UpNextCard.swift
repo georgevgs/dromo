@@ -23,7 +23,7 @@ struct UpNextCard: View {
 
             StructureChart(workout: workout, height: 40)
 
-            HStack(spacing: 16) {
+            AdaptiveStack(spacing: 16) {
                 Label("≈ \(DurationText.approximate(workout.estimatedSeconds))", systemImage: "clock")
                 Label("≈ \(DistanceText.kilometers(workout.estimatedMeters))", systemImage: "point.topleft.down.to.point.bottomright.curvepath")
             }

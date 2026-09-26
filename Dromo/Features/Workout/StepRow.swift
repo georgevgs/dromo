@@ -11,19 +11,21 @@ struct StepRow: View {
                 .frame(width: 4, height: 36)
                 .accessibilityHidden(true)
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text(segment.goal.text)
-                    .font(.headline)
-                    .monospacedDigit()
-                Text(segment.effortText)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
+            AdaptiveStack(spacing: 8) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(segment.goal.text)
+                        .font(.headline)
+                        .monospacedDigit()
+                    Text(segment.effortText)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
 
-            Spacer(minLength: 8)
+                Spacer(minLength: 0)
 
-            if let pace = segment.pace {
-                PaceLabel(pace: pace, isAlert: segment.kind.enforcesPace)
+                if let pace = segment.pace {
+                    PaceLabel(pace: pace, isAlert: segment.kind.enforcesPace)
+                }
             }
         }
         .accessibilityElement(children: .combine)
