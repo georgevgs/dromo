@@ -160,7 +160,8 @@ struct SectionTitle: View {
     var body: some View {
         Text(title)
             .font(.display(.title3, weight: .heavy))
-            .foregroundStyle(.primary)
+            // The label colour itself: the hierarchical .primary would resolve against the header's grey.
+            .foregroundStyle(Color.primary)
             .textCase(nil)
     }
 }
