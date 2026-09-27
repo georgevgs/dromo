@@ -1,7 +1,7 @@
 """Generates the Dromo layered app icon (Icon Composer .icon bundle).
 
-Concept: a stopwatch dial. The coral arc is the run, stopping just short of the white
-finish mark at 25 minutes on a 60-minute dial — sub-25, without a single word.
+Concept: a stopwatch dial. The volt arc is the run, stopping just short of the heat-pink
+goal dot at 25 minutes on a 60-minute dial — sub-25, without a single word.
 """
 import json, math, os, sys
 
@@ -46,20 +46,20 @@ def svg(path, color, rule="nonzero"):
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{C}" height="{C}" viewBox="0 0 {C} {C}">'
             f'<path fill="{color}" fill-rule="{rule}" d="{path}"/></svg>')
 
-# Golden Hour: dusk-violet sky, sunset run, gold goal (the Dromo Design tokens accent, effort, race).
-WHITE, SUNSET, GOLD = "#FFFFFF", "#FF6B3D", "#FFB627"
+# Floodlight: a night sky, a volt run, a heat goal (the Dromo Design tokens accent and effort, dark values).
+WHITE, VOLT, HEAT = "#FFFFFF", "#D4FF3A", "#FF3D7F"
 ring_w, arc_w = 44, 104
 top = CY - R - ring_w / 2                       # outer top edge of the ring
 
 layers = {
     "1-dial.svg":   svg(ring(R + ring_w / 2, R - ring_w / 2), WHITE, "evenodd"),
     "2-crown.svg":  svg(rrect(CX - 30, top - 52, 60, 60, 14) + " " + rrect(CX - 84, top - 118, 168, 72, 30), WHITE),
-    "3-goal.svg":   svg(dot(R, 150, 40), GOLD),                  # 25 min on a 60-min dial
-    "4-run.svg":    svg(arc(R, arc_w, 0, 124), SUNSET),           # the run finishes before it
+    "3-goal.svg":   svg(dot(R, 150, 40), HEAT),                  # 25 min on a 60-min dial
+    "4-run.svg":    svg(arc(R, arc_w, 0, 124), VOLT),             # the run finishes before it
 }
 
 icon = {
-    "fill": {"linear-gradient": ["extended-srgb:0.42,0.28,1.00,1.00000", "extended-srgb:0.12,0.08,0.31,1.00000"],
+    "fill": {"linear-gradient": ["extended-srgb:0.11,0.13,0.29,1.00000", "extended-srgb:0.02,0.02,0.04,1.00000"],
              "orientation": {"start": {"x": 0.5, "y": 0.0}, "stop": {"x": 0.5, "y": 1.0}}},
     "groups": [
         {"name": "Run",
