@@ -70,7 +70,7 @@ struct PlanView: View {
                 }
             }
             .sheet(item: $newPlanRequest) { request in
-                NewPlanView(current: store.plan, sharedText: request.sharedText) { plan in
+                NewPlanView(current: store.plan, shared: request.shared) { plan in
                     replace(with: plan)
                 }
             }

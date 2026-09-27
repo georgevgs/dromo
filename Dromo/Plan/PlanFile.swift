@@ -23,7 +23,8 @@ enum PlanFile {
         throw Problems(messages: reader.problems)
     }
 
-    static func write(_ plan: TrainingPlan) -> String {
+    /// Nonisolated, for sharing: see `SharedPlan`.
+    nonisolated static func write(_ plan: TrainingPlan) -> String {
         // Only text, numbers, true and lists, so it's always valid JSON. Sorted keys keep the output the same every time.
         let data = try! JSONSerialization.data(
             withJSONObject: Writer.plan(plan),
@@ -364,6 +365,14 @@ private struct Reader {
 
 /// The value formats, shared by reading and the tests.
 enum Parse {
+    // Built once: a regex literal inside a function is compiled again on every call, which made reading
+    // a plan ten times slower.
+    private static let trailingUnit = /\s*[a-z]+$/
+    private static let numberAndUnit = /(\d+(?:[.,]\d+)?)\s*([a-z]+)/
+    private static let paceSeparator = /\s*(?:–|—|-|to)\s*/
+    private static let isoDate = /(\d{4})-(\d{2})-(\d{2})/
+    private static let hoursMinutes = /(\d{1,2}):(\d{2})/
+
     /// "90 sec", "90s", "1:30", "10 min", "1 h", "1:05:00", "600 m", "1 km", "1.5 km", "5K" or "open".
     static func goal(_ text: String) -> SegmentGoal? {
         let text = text.lowercased().trimmingCharacters(in: .whitespaces)
@@ -372,13 +381,13 @@ enum Parse {
         }
         if text.contains(":") {
             // "1:30" or "1:30 min": minutes and seconds either way.
-            let digits = text.replacing(/\s*[a-z]+$/, with: "")
+            let digits = text.replacing(trailingUnit, with: "")
             guard let seconds = clock(digits), seconds > 0 else { return nil }
             return .time(seconds: seconds)
         }
 
         // A number and a unit: "90 sec", "0.6 km", "1,5 km".
-        guard let match = text.wholeMatch(of: /(\d+(?:[.,]\d+)?)\s*([a-z]+)/),
+        guard let match = text.wholeMatch(of: numberAndUnit),
               let number = Double(match.1.replacingOccurrences(of: ",", with: ".")),
               number > 0
         else {
@@ -423,7 +432,7 @@ enum Parse {
             text = text.replacingOccurrences(of: unit, with: "")
         }
         var ends: [Int] = []
-        for end in text.split(separator: /\s*(?:–|—|-|to)\s*/) {
+        for end in text.split(separator: paceSeparator) {
             // Minutes and seconds only, between 2:00 and 15:00 a kilometre.
             guard end.filter({ $0 == ":" }).count == 1, let seconds = clock(String(end)), (120...900).contains(seconds) else { return nil }
             ends.append(seconds)
@@ -434,7 +443,7 @@ enum Parse {
 
     /// "2026-10-08", checked against the calendar so 30 February is caught.
     static func date(_ text: String) -> PlanDate? {
-        guard let match = text.trimmingCharacters(in: .whitespaces).wholeMatch(of: /(\d{4})-(\d{2})-(\d{2})/),
+        guard let match = text.trimmingCharacters(in: .whitespaces).wholeMatch(of: isoDate),
               let year = Int(match.1), let month = Int(match.2), let day = Int(match.3)
         else {
             return nil
@@ -447,7 +456,7 @@ enum Parse {
 
     /// "17:00" or "9:30".
     static func timeOfDay(_ text: String) -> PlanTime? {
-        guard let match = text.trimmingCharacters(in: .whitespaces).wholeMatch(of: /(\d{1,2}):(\d{2})/),
+        guard let match = text.trimmingCharacters(in: .whitespaces).wholeMatch(of: hoursMinutes),
               let hour = Int(match.1), let minute = Int(match.2),
               hour < 24, minute < 60
         else {
@@ -466,7 +475,7 @@ enum Parse {
 // MARK: - Writing
 
 /// A plan as the dictionaries and lists `JSONSerialization` writes, in the same format reading takes.
-private enum Writer {
+nonisolated private enum Writer {
     static func plan(_ plan: TrainingPlan) -> [String: Any] {
         var object: [String: Any] = [
             "dromo": 1,

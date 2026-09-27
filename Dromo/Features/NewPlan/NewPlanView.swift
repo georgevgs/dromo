@@ -6,7 +6,19 @@ import UniformTypeIdentifiers
 /// a file opened in Dromo, or a chat's reply sent with the share extension.
 struct NewPlanRequest: Identifiable {
     let id = UUID()
-    var sharedText: String?
+    /// What Dromo read from a shared plan. Read before the sheet opens, so it opens with the plan in place
+    /// rather than empty and filling in once it's up.
+    var shared: Result<TrainingPlan, PlanFile.Problems>?
+
+    init() {}
+
+    init(sharedText: String) {
+        do throws(PlanFile.Problems) {
+            shared = .success(try PlanFile.read(sharedText))
+        } catch {
+            shared = .failure(error)
+        }
+    }
 }
 
 /// Brings in a plan an AI chat wrote: copy the prompt for the chat, paste its reply (or choose the file it made),
@@ -14,8 +26,8 @@ struct NewPlanRequest: Identifiable {
 /// confirmation it needs. Sharing the current plan out is the plan screen's Share button, not this sheet.
 struct NewPlanView: View {
     let current: TrainingPlan
-    /// A plan shared to Dromo from another app, read straight away.
-    let sharedText: String?
+    /// Whether the plan was shared to Dromo from another app, and so is already read.
+    let isShared: Bool
     let onReplace: (TrainingPlan) -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -25,11 +37,26 @@ struct NewPlanView: View {
     @State private var hasCopiedPrompt = false
     @State private var isChoosingFile = false
 
+    init(current: TrainingPlan, shared: Result<TrainingPlan, PlanFile.Problems>?, onReplace: @escaping (TrainingPlan) -> Void) {
+        self.current = current
+        isShared = shared != nil
+        self.onReplace = onReplace
+        // Only the first time counts: from then on the sheet keeps what it read.
+        switch shared {
+        case .success(let plan):
+            _newPlan = State(initialValue: plan)
+        case .failure(let error):
+            _problems = State(initialValue: error.messages)
+        case nil:
+            break
+        }
+    }
+
     var body: some View {
         NavigationStack {
             Form {
                 // A shared plan is already here; asking the chat is for starting from scratch.
-                if sharedText == nil {
+                if !isShared {
                     askSection
                     pasteSection
                 }
@@ -60,11 +87,6 @@ struct NewPlanView: View {
             }
             .fileImporter(isPresented: $isChoosingFile, allowedContentTypes: [.json, .plainText]) { outcome in
                 readChosenFile(outcome)
-            }
-            .task {
-                if let sharedText {
-                    read(sharedText)
-                }
             }
         }
     }
@@ -207,5 +229,5 @@ struct NewPlanView: View {
 }
 
 #Preview {
-    NewPlanView(current: BundledPlan.plan, sharedText: nil) { _ in }
+    NewPlanView(current: BundledPlan.plan, shared: nil) { _ in }
 }

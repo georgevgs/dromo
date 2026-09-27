@@ -2,25 +2,20 @@ import CoreTransferable
 import UniformTypeIdentifiers
 
 /// The current plan as a .json file named after it, for sharing into an AI chat to adjust, or to keep.
-struct SharedPlan: Transferable {
-    let data: Data
-    let fileName: String
-
-    @MainActor
-    init(plan: TrainingPlan) {
-        // Written now, on the main thread, so sharing can hand it over without the main thread:
-        // the share sheet may be holding it while it waits for the data, and asking for it back would freeze the app.
-        data = Data(PlanFile.write(plan).utf8)
-        // Slashes and colons can't be in a file name: "5K Sub-25" stays, "Base 1/2" becomes "Base 1-2".
-        fileName = plan.title.replacingOccurrences(of: "/", with: "-").replacingOccurrences(of: ":", with: "-") + ".json"
-    }
+///
+/// Written only when the share sheet asks for it, not each time the plan screen draws its Share button.
+/// Nonisolated so the writing happens off the main thread: the share sheet may be holding the main thread
+/// while it waits for the data, and needing it back would freeze the app.
+nonisolated struct SharedPlan: Transferable {
+    let plan: TrainingPlan
 
     static var transferRepresentation: some TransferRepresentation {
         DataRepresentation(exportedContentType: .json) { shared in
-            shared.data
+            Data(PlanFile.write(shared.plan).utf8)
         }
         .suggestedFileName { shared in
-            shared.fileName
+            // Slashes and colons can't be in a file name: "5K Sub-25" stays, "Base 1/2" becomes "Base 1-2".
+            shared.plan.title.replacingOccurrences(of: "/", with: "-").replacingOccurrences(of: ":", with: "-") + ".json"
         }
     }
 }

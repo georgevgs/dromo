@@ -1,7 +1,7 @@
 import Foundation
 
 /// A calendar day, in the phone's time zone. Stored as components so it never shifts across time zones.
-struct PlanDate: Codable, Hashable, Comparable {
+nonisolated struct PlanDate: Codable, Hashable, Comparable {
     var year: Int
     var month: Int
     var day: Int
@@ -39,7 +39,7 @@ extension PlanDate {
 }
 
 /// A time of day, only used where it matters (the race start).
-struct PlanTime: Codable, Hashable {
+nonisolated struct PlanTime: Codable, Hashable {
     var hour: Int
     var minute: Int
 }

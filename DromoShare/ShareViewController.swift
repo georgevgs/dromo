@@ -5,8 +5,12 @@ import UniformTypeIdentifiers
 /// "Share to Dromo" for a chat's reply: leaves the plan for Dromo to open, and says so.
 /// Checking and replacing happen in the app, where the preview, undo and Watch sync live.
 final class ShareViewController: UIViewController {
+    private var host: UIHostingController<ShareResultView>?
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        // Up straight away, so the sheet isn't blank while the shared text loads.
+        show(nil)
         Task {
             show(await send())
         }
@@ -37,9 +41,14 @@ final class ShareViewController: UIViewController {
         return nil
     }
 
-    private func show(_ outcome: ShareOutcome) {
+    /// The outcome, or nil while still sending. The first call puts the view up; later ones update it.
+    private func show(_ outcome: ShareOutcome?) {
         let result = ShareResultView(outcome: outcome) { [weak self] in
             self?.extensionContext?.completeRequest(returningItems: nil)
+        }
+        if let host {
+            host.rootView = result
+            return
         }
         let host = UIHostingController(rootView: result)
         addChild(host)
@@ -47,51 +56,60 @@ final class ShareViewController: UIViewController {
         host.view.frame = view.bounds
         host.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         host.didMove(toParent: self)
+        self.host = host
     }
 }
 
 enum ShareOutcome {
     case sent, notAPlan, failed
-}
 
-private struct ShareResultView: View {
-    let outcome: ShareOutcome
-    let onDone: () -> Void
-
-    var body: some View {
-        NavigationStack {
-            ContentUnavailableView(title, systemImage: symbol, description: Text(message))
-                .navigationTitle("Dromo")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("Done", action: onDone)
-                    }
-                }
-        }
-    }
-
-    private var title: String {
-        switch outcome {
+    var title: String {
+        switch self {
         case .sent: "Sent to Dromo"
         case .notAPlan: "Not a Plan"
         case .failed: "Couldn't Send"
         }
     }
 
-    private var symbol: String {
-        switch outcome {
+    var symbol: String {
+        switch self {
         case .sent: "checkmark.circle"
         case .notAPlan: "questionmark.circle"
         case .failed: "exclamationmark.circle"
         }
     }
 
-    private var message: String {
-        switch outcome {
+    var message: String {
+        switch self {
         case .sent: "Open Dromo to see the plan and replace your current one."
         case .notAPlan: "This doesn't look like a Dromo plan. Share the chat's whole reply, with the plan in it."
         case .failed: "Copy the reply and paste it into Dromo's New Plan instead."
+        }
+    }
+}
+
+private struct ShareResultView: View {
+    /// nil while still sending.
+    let outcome: ShareOutcome?
+    let onDone: () -> Void
+
+    var body: some View {
+        NavigationStack {
+            Group {
+                if let outcome {
+                    ContentUnavailableView(outcome.title, systemImage: outcome.symbol, description: Text(outcome.message))
+                } else {
+                    ProgressView()
+                }
+            }
+            .navigationTitle("Dromo")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done", action: onDone)
+                        .disabled(outcome == nil)
+                }
+            }
         }
     }
 }
