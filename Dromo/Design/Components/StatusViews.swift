@@ -26,7 +26,6 @@ struct Chip: View {
             .foregroundStyle(tint)
             .padding(.horizontal, 12)
             .padding(.vertical, 4)
-            .background(tint.opacity(0.14), in: .capsule)
-            .overlay { Capsule().strokeBorder(tint.opacity(0.25), lineWidth: 1) }
+            .background(tint.opacity(0.12), in: .capsule)
     }
 }

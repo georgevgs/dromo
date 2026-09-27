@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Every session in the plan as a capsule, grouped by week: done, missed, today or still to come.
-/// Drawn for the night race header: done sessions glow mint, today is outlined in volt.
+/// Drawn for the night race header: done sessions are mint, today is outlined in volt.
 struct PlanProgress: View {
     struct Session: Identifiable {
         let id: UUID
@@ -21,11 +21,11 @@ struct PlanProgress: View {
                             .overlay {
                                 // Today is the one outlined capsule, so it doesn't rely on colour alone.
                                 if session.isToday {
-                                    Capsule().strokeBorder(.tint, lineWidth: 2)
+                                    // The asset itself, not .tint: a list row's tint follows the app's appearance, not this header's Dark.
+                                    Capsule().strokeBorder(Color.accent, lineWidth: 1.5)
                                 }
                             }
-                            .frame(height: 8)
-                            .shadow(color: session.status == .completed ? .done.opacity(0.6) : .clear, radius: 4)
+                            .frame(height: 7)
                     }
                 }
             }

@@ -28,47 +28,47 @@ struct WorkoutDetailView: View {
             }
             .listRowBackground(Color.clear)
 
-            Group {
-                Section("Structure") {
-                    StructureChart(workout: workout, height: 64)
-                        .padding(.vertical, 8)
-                }
+            Section("Structure") {
+                StructureChart(workout: workout, height: 64)
+                    .padding(.vertical, 8)
+            }
 
-                if let warmup = workout.warmup {
-                    Section("Warm-up") { StepRow(segment: warmup) }
-                }
-                ForEach(workout.blocks) { block in
-                    Section {
-                        ForEach(block.segments) { StepRow(segment: $0) }
-                    } header: {
-                        BlockHeader(block: block)
-                    }
-                }
-                if let cooldown = workout.cooldown {
-                    Section("Cool-down") { StepRow(segment: cooldown) }
-                }
-
-                if let notes = workout.notes {
-                    Section("Notes") {
-                        Text(notes)
-                            .font(.callout)
-                            .foregroundStyle(.secondary)
-                    }
+            if let warmup = workout.warmup {
+                Section("Warm-up") { StepRow(segment: warmup) }
+            }
+            ForEach(workout.blocks) { block in
+                Section {
+                    ForEach(block.segments) { StepRow(segment: $0) }
+                } header: {
+                    BlockHeader(block: block)
                 }
             }
-            .listRowBackground(Theme.glass)
+            if let cooldown = workout.cooldown {
+                Section("Cool-down") { StepRow(segment: cooldown) }
+            }
+
+            if let notes = workout.notes {
+                Section("Notes") {
+                    Text(notes)
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                }
+            }
         }
-        // The session glows in its type's colour: heat, ice or ultraviolet.
-        .floodlight(glow: SessionType(workout).tint, secondGlow: .clear)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button("Edit") { isEditing = true }
             }
             ToolbarItem(placement: .secondaryAction) {
-                Button(status == .completed ? "Mark as Not Done" : "Mark as Done",
-                       systemImage: status == .completed ? "arrow.uturn.backward" : "checkmark.circle") {
-                    store.setCompleted(workout, status != .completed)
+                if status == .completed {
+                    Button("Mark as Not Done", systemImage: "arrow.uturn.backward") {
+                        store.setCompleted(workout, false)
+                    }
+                } else {
+                    Button("Mark as Done", systemImage: "checkmark.circle") {
+                        store.setCompleted(workout, true)
+                    }
                 }
             }
         }
@@ -98,7 +98,7 @@ struct WorkoutDetailView: View {
                 Button {
                     Task { await schedule(workout) }
                 } label: {
-                    Label(status == .onWatch ? "Update on Apple Watch" : "Send to Apple Watch", systemImage: "applewatch")
+                    Label(sendTitle(status), systemImage: "applewatch")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.glassProminent)
@@ -118,6 +118,13 @@ struct WorkoutDetailView: View {
         .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
         .padding(.horizontal)
         .padding(.bottom, 8)
+    }
+
+    private func sendTitle(_ status: WorkoutStatus) -> String {
+        if status == .onWatch {
+            return "Update on Apple Watch"
+        }
+        return "Send to Apple Watch"
     }
 
     private var isShowingProblem: Binding<Bool> {
@@ -145,7 +152,7 @@ struct WorkoutDetailView: View {
 
 #Preview {
     NavigationStack {
-        WorkoutDetailView(workoutID: DefaultPlan.plan.workouts[1].id)
+        WorkoutDetailView(workoutID: BundledPlan.plan.workouts[1].id)
     }
     .environment(PlanStore())
     .environment(WatchSchedule())

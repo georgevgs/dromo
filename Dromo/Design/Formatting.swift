@@ -8,6 +8,14 @@ enum DurationText {
         "\(seconds / 60):" + String(format: "%02d", seconds % 60)
     }
 
+    /// 1499 → "24:59", 6300 → "1:45:00"
+    static func clock(_ seconds: Int) -> String {
+        if seconds < 3600 {
+            return minutesSeconds(seconds)
+        }
+        return "\(seconds / 3600):" + String(format: "%02d:%02d", seconds / 60 % 60, seconds % 60)
+    }
+
     /// 2700 → "45 min", 3900 → "1 hr, 5 min" — localised.
     static func approximate(_ seconds: Int) -> String {
         let rounded = (seconds + 30) / 60 * 60
@@ -15,7 +23,25 @@ enum DurationText {
     }
 }
 
+enum CountText {
+    /// 1 → "1 week", 6 → "6 weeks"
+    static func weeks(_ count: Int) -> String {
+        if count == 1 {
+            return "1 week"
+        }
+        return "\(count) weeks"
+    }
+}
+
 enum DistanceText {
+    /// 5000 → "5K", 21097 → "21.1 km": how races are named.
+    static func race(_ meters: Int) -> String {
+        if meters.isMultiple(of: 1000) {
+            return "\(meters / 1000)K"
+        }
+        return kilometers(meters)
+    }
+
     /// 7_350 → "7.4 km" — localised.
     static func kilometers(_ meters: Int) -> String {
         let oneDecimal = FloatingPointFormatStyle<Double>.number.precision(.fractionLength(1))
@@ -30,9 +56,10 @@ extension PaceRange {
 
     /// "5:10–5:20", or "5:00" when both ends match.
     var shortText: String {
-        fastest == slowest
-            ? DurationText.minutesSeconds(fastest)
-            : "\(DurationText.minutesSeconds(fastest))–\(DurationText.minutesSeconds(slowest))"
+        if fastest == slowest {
+            return DurationText.minutesSeconds(fastest)
+        }
+        return "\(DurationText.minutesSeconds(fastest))–\(DurationText.minutesSeconds(slowest))"
     }
 }
 
@@ -45,20 +72,24 @@ extension SegmentGoal {
     /// "15 sec", "1:30", "10 min", "600 m", "1 km", "Open"
     var text: String {
         switch self {
-        case .time(let seconds) where seconds < 60:
-            "\(seconds) sec"
-        case .time(let seconds) where seconds < 5 * 60 || !seconds.isMultiple(of: 60):
-            DurationText.minutesSeconds(seconds)
         case .time(let seconds):
-            "\(seconds / 60) min"
-        case .distance(let meters) where meters < 1000:
-            "\(meters) m"
+            if seconds < 60 {
+                return "\(seconds) sec"
+            }
+            if seconds < 5 * 60 || !seconds.isMultiple(of: 60) {
+                return DurationText.minutesSeconds(seconds)
+            }
+            return "\(seconds / 60) min"
         case .distance(let meters):
-            meters.isMultiple(of: 1000)
-                ? "\(meters / 1000) km"
-                : String(format: "%.1f km", Double(meters) / 1000)
+            if meters < 1000 {
+                return "\(meters) m"
+            }
+            if meters.isMultiple(of: 1000) {
+                return "\(meters / 1000) km"
+            }
+            return String(format: "%.1f km", Double(meters) / 1000)
         case .open:
-            "Open"
+            return "Open"
         }
     }
 }
@@ -67,7 +98,10 @@ extension SegmentBlock {
     /// "6 rounds", or what a single pass is: "Easy", "Tempo", "Race".
     var title: String {
         guard repeats == 1, let first = segments.first else { return "\(repeats) rounds" }
-        return first.kind == .race ? "Race" : first.name
+        if first.kind == .race {
+            return "Race"
+        }
+        return first.name
     }
 }
 
@@ -126,7 +160,7 @@ extension PlanDate {
 
     private static var style: Date.FormatStyle {
         var style = Date.FormatStyle()
-        style.timeZone = .athens
+        style.timeZone = Calendar.plan.timeZone
         return style
     }
 }

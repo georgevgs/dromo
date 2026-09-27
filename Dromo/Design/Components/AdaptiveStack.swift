@@ -10,9 +10,14 @@ struct AdaptiveStack<Content: View>: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
-        let layout = dynamicTypeSize.isAccessibilitySize
-            ? AnyLayout(VStackLayout(alignment: .leading, spacing: spacing))
-            : AnyLayout(HStackLayout(alignment: alignment, spacing: spacing))
         layout { content }
+    }
+
+    /// AnyLayout rather than if/else, so the content keeps its identity when the text size changes.
+    private var layout: AnyLayout {
+        if dynamicTypeSize.isAccessibilitySize {
+            return AnyLayout(VStackLayout(alignment: .leading, spacing: spacing))
+        }
+        return AnyLayout(HStackLayout(alignment: alignment, spacing: spacing))
     }
 }

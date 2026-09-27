@@ -1,0 +1,337 @@
+{
+  "dromo": 1,
+  "title": "5K Sub-25",
+  "race": {
+    "name": "Athens",
+    "date": "2026-11-07",
+    "distance": "5 km",
+    "goal": "24:59"
+  },
+  "weeks": [
+    {
+      "title": "Week 1",
+      "sessions": [
+        {
+          "date": "2026-09-28",
+          "title": "Easy + strides",
+          "notes": "Easy, conversational effort. Strides are short, relaxed, smooth accelerations — fast but controlled, never sprints. Recover fully between them.",
+          "blocks": [
+            {
+              "steps": [
+                { "easy": "30 min", "pace": "6:20–6:50" }
+              ]
+            },
+            {
+              "repeat": 4,
+              "steps": [
+                { "stride": "15 sec" },
+                { "recovery": "1:15" }
+              ]
+            }
+          ]
+        },
+        {
+          "date": "2026-10-01",
+          "title": "6 × 90 sec",
+          "warmup": "10 min",
+          "blocks": [
+            {
+              "repeat": 6,
+              "steps": [
+                { "work": "1:30", "pace": "5:10–5:20" },
+                { "recovery": "2 min" }
+              ]
+            }
+          ],
+          "cooldown": "10 min"
+        },
+        {
+          "date": "2026-10-03",
+          "title": "Easy 40 min",
+          "notes": "Conversational effort. The pace is a rough guide only — slow down freely for heat, hills or fatigue.",
+          "blocks": [
+            {
+              "steps": [
+                { "easy": "40 min", "pace": "6:15–6:45" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Week 2",
+      "sessions": [
+        {
+          "date": "2026-10-05",
+          "title": "Easy + strides",
+          "notes": "Easy, conversational effort. Strides are short, relaxed, smooth accelerations — fast but controlled, never sprints. Recover fully between them.",
+          "blocks": [
+            {
+              "steps": [
+                { "easy": "35 min" }
+              ]
+            },
+            {
+              "repeat": 5,
+              "steps": [
+                { "stride": "20 sec" },
+                { "recovery": "1:15" }
+              ]
+            }
+          ]
+        },
+        {
+          "date": "2026-10-08",
+          "title": "5 × 600 m",
+          "warmup": "10 min",
+          "blocks": [
+            {
+              "repeat": 5,
+              "steps": [
+                { "work": "600 m", "pace": "5:00–5:05" },
+                { "recovery": "2 min" }
+              ]
+            }
+          ],
+          "cooldown": "10 min"
+        },
+        {
+          "date": "2026-10-10",
+          "title": "Progression 45 min",
+          "notes": "Controlled progression, not a hard tempo.",
+          "blocks": [
+            {
+              "steps": [
+                { "easy": "35 min" }
+              ]
+            },
+            {
+              "steps": [
+                { "work": "10 min", "pace": "5:45–6:00", "label": "Steady" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Week 3",
+      "sessions": [
+        {
+          "date": "2026-10-12",
+          "title": "Easy + strides",
+          "notes": "Easy, conversational effort. Strides are short, relaxed, smooth accelerations — fast but controlled, never sprints. Recover fully between them.",
+          "blocks": [
+            {
+              "steps": [
+                { "easy": "35 min" }
+              ]
+            },
+            {
+              "repeat": 6,
+              "steps": [
+                { "stride": "20 sec" },
+                { "recovery": "1:15" }
+              ]
+            }
+          ]
+        },
+        {
+          "date": "2026-10-15",
+          "title": "4 × 1 km",
+          "checkpoint": true,
+          "notes": "Fitness checkpoint #1. Success means all four reps at a reasonably consistent pace, with the last one still controlled rather than all-out. Adjust later targets from here if needed.",
+          "warmup": "10 min",
+          "blocks": [
+            {
+              "repeat": 4,
+              "steps": [
+                { "work": "1 km", "pace": "5:00–5:05" },
+                { "recovery": "2:30" }
+              ]
+            }
+          ],
+          "cooldown": "10 min"
+        },
+        {
+          "date": "2026-10-17",
+          "title": "Easy 50 min",
+          "notes": "Conversational effort. The pace is a rough guide only — slow down freely for heat, hills or fatigue.",
+          "blocks": [
+            {
+              "steps": [
+                { "easy": "50 min", "pace": "6:05–6:35" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Week 4",
+      "sessions": [
+        {
+          "date": "2026-10-19",
+          "title": "Easy + strides",
+          "notes": "Easy, conversational effort. Strides are short, relaxed, smooth accelerations — fast but controlled, never sprints. Recover fully between them.",
+          "blocks": [
+            {
+              "steps": [
+                { "easy": "35 min" }
+              ]
+            },
+            {
+              "repeat": 5,
+              "steps": [
+                { "stride": "20 sec" },
+                { "recovery": "1:15" }
+              ]
+            }
+          ]
+        },
+        {
+          "date": "2026-10-22",
+          "title": "6 × 400 m",
+          "notes": "About 1:54–1:56 per 400 m. Fast but controlled — not maximal.",
+          "warmup": "10 min",
+          "blocks": [
+            {
+              "repeat": 6,
+              "steps": [
+                { "work": "400 m", "pace": "4:45–4:50" },
+                { "recovery": "1:30" }
+              ]
+            }
+          ],
+          "cooldown": "10 min"
+        },
+        {
+          "date": "2026-10-24",
+          "title": "Tempo 20 min",
+          "warmup": "15 min",
+          "blocks": [
+            {
+              "steps": [
+                { "work": "20 min", "pace": "5:15–5:25", "label": "Tempo" }
+              ]
+            }
+          ],
+          "cooldown": "10 min"
+        }
+      ]
+    },
+    {
+      "title": "Week 5",
+      "sessions": [
+        {
+          "date": "2026-10-26",
+          "title": "Easy + strides",
+          "notes": "Easy, conversational effort. Strides are short, relaxed, smooth accelerations — fast but controlled, never sprints. Recover fully between them.",
+          "blocks": [
+            {
+              "steps": [
+                { "easy": "35 min" }
+              ]
+            },
+            {
+              "repeat": 5,
+              "steps": [
+                { "stride": "20 sec" },
+                { "recovery": "1:15" }
+              ]
+            }
+          ]
+        },
+        {
+          "date": "2026-10-29",
+          "title": "3 × 1 km",
+          "checkpoint": true,
+          "notes": "Fitness checkpoint #2. Consistent, controlled reps here are good evidence that sub-25 is realistic. If not, edit the race targets.",
+          "warmup": "12 min",
+          "blocks": [
+            {
+              "repeat": 3,
+              "steps": [
+                { "work": "1 km", "pace": "4:50–4:55" },
+                { "recovery": "2:30" }
+              ]
+            }
+          ],
+          "cooldown": "10 min"
+        },
+        {
+          "date": "2026-10-31",
+          "title": "3 km at race pace",
+          "notes": "Race-pace rehearsal. Should feel controlled — not a 5K time trial.",
+          "warmup": "2 km",
+          "blocks": [
+            {
+              "steps": [
+                { "work": "3 km", "pace": "4:55–5:05", "label": "Race pace" }
+              ]
+            }
+          ],
+          "cooldown": "1 km"
+        }
+      ]
+    },
+    {
+      "title": "Race Week",
+      "sessions": [
+        {
+          "date": "2026-11-02",
+          "title": "Easy + strides",
+          "notes": "Should leave you feeling fresh. Strides are short, relaxed, smooth accelerations — fast but controlled, never sprints. Recover fully between them.",
+          "blocks": [
+            {
+              "steps": [
+                { "easy": "25 min" }
+              ]
+            },
+            {
+              "repeat": 4,
+              "steps": [
+                { "stride": "20 sec" },
+                { "recovery": "1:15" }
+              ]
+            }
+          ]
+        },
+        {
+          "date": "2026-11-05",
+          "title": "3 × 400 m",
+          "notes": "Race sharpening: keeps you familiar with faster running while creating minimal fatigue.",
+          "warmup": "10 min",
+          "blocks": [
+            {
+              "repeat": 3,
+              "steps": [
+                { "work": "400 m", "pace": "4:45–4:50" },
+                { "recovery": "2 min" }
+              ]
+            }
+          ],
+          "cooldown": "10 min"
+        },
+        {
+          "date": "2026-11-07",
+          "title": "Athens 5K",
+          "start": "17:00",
+          "notes": "Athens Authentic Marathon COSMOTE 5K. Before the start: 12–15 min easy, 4 short relaxed strides, then easy recovery. Start this workout on the gun. Goal under 25:00 (4:59/km) — don't go out too fast: 5:04 · 5:00 · 4:59 · 4:57 · 4:53 = 24:53.",
+          "blocks": [
+            {
+              "steps": [
+                { "race": "1 km", "pace": "5:03–5:05", "label": "KM 1" },
+                { "race": "1 km", "pace": "5:00", "label": "KM 2" },
+                { "race": "1 km", "pace": "4:58–5:00", "label": "KM 3" },
+                { "race": "1 km", "pace": "4:55–4:58", "label": "KM 4" },
+                { "race": "open", "pace": "4:53", "label": "KM 5 → finish" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -6,6 +6,7 @@ struct EditWorkoutView: View {
     @Environment(PlanStore.self) private var store
     @Environment(WatchSchedule.self) private var watch
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.paceScale) private var paceScale
 
     @State private var draft: PlannedWorkout
 
@@ -16,60 +17,56 @@ struct EditWorkoutView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Group {
+                Section {
+                    StructureChart(workout: draft, height: 48)
+                        .padding(.vertical, 8)
+                } footer: {
+                    Text("≈ \(DurationText.approximate(draft.estimatedSeconds(on: paceScale))) · ≈ \(DistanceText.kilometers(draft.estimatedMeters(on: paceScale)))")
+                }
+
+                Section("Name") {
+                    TextField("Title", text: $draft.title)
+                }
+
+                if draft.warmup != nil {
                     Section {
-                        StructureChart(workout: draft, height: 48)
-                            .padding(.vertical, 8)
-                    } footer: {
-                        Text("≈ \(DurationText.approximate(draft.estimatedSeconds)) · ≈ \(DistanceText.kilometers(draft.estimatedMeters))")
-                    }
-
-                    Section("Name") {
-                        TextField("Title", text: $draft.title)
-                    }
-
-                    if draft.warmup != nil {
-                        Section {
-                            SegmentEditor(segment: Binding($draft.warmup)!)
-                        }
-                    }
-                    ForEach($draft.blocks) { $block in
-                        Section {
-                            if block.repeats > 1 || block.segments.count > 1 {
-                                Stepper(value: $block.repeats, in: 1...20) {
-                                    LabeledContent("Rounds", value: block.repeats, format: .number)
-                                }
-                            }
-                            ForEach($block.segments) { $segment in
-                                SegmentEditor(segment: $segment)
-                            }
-                        } header: {
-                            BlockHeader(block: block)
-                        }
-                    }
-                    if draft.cooldown != nil {
-                        Section {
-                            SegmentEditor(segment: Binding($draft.cooldown)!)
-                        }
-                    }
-
-                    Section("Notes") {
-                        TextField("Notes", text: notes, axis: .vertical)
-                    }
-
-                    if let original = DefaultPlan.workout(id: draft.id) {
-                        Section {
-                            Button("Restore Original", systemImage: "arrow.counterclockwise") {
-                                draft = original
-                            }
-                        } footer: {
-                            Text("Puts back the plan's original version of this session. Takes effect when you save.")
-                        }
+                        SegmentEditor(segment: Binding($draft.warmup)!)
                     }
                 }
-                .listRowBackground(Theme.glass)
+                ForEach($draft.blocks) { $block in
+                    Section {
+                        if block.repeats > 1 || block.segments.count > 1 {
+                            Stepper(value: $block.repeats, in: 1...20) {
+                                LabeledContent("Rounds", value: block.repeats, format: .number)
+                            }
+                        }
+                        ForEach($block.segments) { $segment in
+                            SegmentEditor(segment: $segment)
+                        }
+                    } header: {
+                        BlockHeader(block: block)
+                    }
+                }
+                if draft.cooldown != nil {
+                    Section {
+                        SegmentEditor(segment: Binding($draft.cooldown)!)
+                    }
+                }
+
+                Section("Notes") {
+                    TextField("Notes", text: notes, axis: .vertical)
+                }
+
+                if let original = store.originalWorkout(id: draft.id) {
+                    Section {
+                        Button("Restore Original", systemImage: "arrow.counterclockwise") {
+                            draft = original
+                        }
+                    } footer: {
+                        Text("Puts back the plan's original version of this session. Takes effect when you save.")
+                    }
+                }
             }
-            .floodlight(glow: SessionType(draft).tint, secondGlow: .clear)
             .navigationTitle("Edit Session")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -92,7 +89,17 @@ struct EditWorkoutView: View {
     }
 
     private var notes: Binding<String> {
-        Binding(get: { draft.notes ?? "" }, set: { draft.notes = $0.isEmpty ? nil : $0 })
+        Binding(
+            get: { draft.notes ?? "" },
+            set: { text in
+                // Emptying the field removes the notes rather than keeping an empty string.
+                if text.isEmpty {
+                    draft.notes = nil
+                } else {
+                    draft.notes = text
+                }
+            }
+        )
     }
 
     private func save() {
@@ -147,7 +154,13 @@ private struct GoalStepper: View {
     /// Finer steps for short efforts: 5 sec up to a minute, 15 sec up to five, then whole minutes.
     /// Symmetric, so stepping up and back down lands where you started.
     private static func timeStep(below seconds: Int) -> Int {
-        seconds <= 60 ? 5 : seconds <= 5 * 60 ? 15 : 60
+        if seconds <= 60 {
+            return 5
+        }
+        if seconds <= 5 * 60 {
+            return 15
+        }
+        return 60
     }
 }
 
@@ -156,9 +169,16 @@ private struct PaceEditor: View {
     /// A Watch pace alert, rather than guidance shown only in the app.
     let isAlert: Bool
 
+    private var fromLabel: String {
+        if isAlert {
+            return "Alert from"
+        }
+        return "Guide from"
+    }
+
     var body: some View {
         Stepper {
-            LabeledContent(isAlert ? "Alert from" : "Guide from", value: "\(DurationText.minutesSeconds(pace.fastest))/km")
+            LabeledContent(fromLabel, value: "\(DurationText.minutesSeconds(pace.fastest))/km")
         } onIncrement: {
             pace.fastest = min(pace.fastest + 1, pace.slowest)
         } onDecrement: {
@@ -175,7 +195,7 @@ private struct PaceEditor: View {
 }
 
 #Preview {
-    EditWorkoutView(workout: DefaultPlan.plan.workouts[7])
+    EditWorkoutView(workout: BundledPlan.plan.workouts[7])
         .environment(PlanStore())
         .environment(WatchSchedule())
 }

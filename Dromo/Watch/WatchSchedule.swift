@@ -25,7 +25,11 @@ final class WatchSchedule {
 
     func refresh() async {
         authorization = await scheduler.authorizationState
-        scheduled = authorization == .authorized ? await scheduler.scheduledWorkouts : []
+        if authorization == .authorized {
+            scheduled = await scheduler.scheduledWorkouts
+        } else {
+            scheduled = []
+        }
     }
 
     func entry(for workout: PlannedWorkout) -> ScheduledWorkoutPlan? {
@@ -34,7 +38,8 @@ final class WatchSchedule {
 
     /// On the Watch and not yet done there.
     func isPending(_ workout: PlannedWorkout) -> Bool {
-        entry(for: workout).map { !$0.complete } ?? false
+        guard let entry = entry(for: workout) else { return false }
+        return !entry.complete
     }
 
     var completedIDs: [PlannedWorkout.ID] {

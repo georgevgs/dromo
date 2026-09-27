@@ -7,11 +7,16 @@ import Foundation
 
 struct TrainingPlan: Codable, Hashable {
     var title: String
-    var raceName: String
-    var raceDate: PlanDate
-    var raceDistanceMeters: Int
-    var goalTimeSeconds: Int
+    /// What the plan builds up to, if anything: a base-building block has no race.
+    var race: Race?
     var weeks: [TrainingWeek]
+}
+
+struct Race: Codable, Hashable {
+    var name: String
+    var date: PlanDate
+    var distanceMeters: Int
+    var goalTimeSeconds: Int?
 }
 
 extension TrainingPlan {
@@ -21,12 +26,42 @@ extension TrainingPlan {
     }
 
     var raceWorkout: PlannedWorkout? {
-        workouts.first { $0.date == raceDate }
+        race.flatMap { race in workouts.first { $0.date == race.date } }
+    }
+}
+
+extension Race {
+    /// Average pace the goal needs, rounded down to whole seconds: 24:59 over 5 km → 4:59/km.
+    var goalPaceSecondsPerKm: Int? {
+        goalTimeSeconds.map { $0 * 1000 / distanceMeters }
+    }
+}
+
+extension TrainingPlan {
+    private enum CodingKeys: String, CodingKey {
+        case title, race, weeks
     }
 
-    /// Average pace the goal needs, rounded down to whole seconds: 24:59 over 5 km → 4:59/km.
-    var goalPaceSecondsPerKm: Int {
-        goalTimeSeconds * 1000 / raceDistanceMeters
+    /// Plans saved before the race became optional kept it in four fields of their own.
+    private enum LegacyKeys: String, CodingKey {
+        case raceName, raceDate, raceDistanceMeters, goalTimeSeconds
+    }
+
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        title = try container.decode(String.self, forKey: .title)
+        weeks = try container.decode([TrainingWeek].self, forKey: .weeks)
+        let legacy = try decoder.container(keyedBy: LegacyKeys.self)
+        if legacy.contains(.raceName) {
+            race = Race(
+                name: try legacy.decode(String.self, forKey: .raceName),
+                date: try legacy.decode(PlanDate.self, forKey: .raceDate),
+                distanceMeters: try legacy.decode(Int.self, forKey: .raceDistanceMeters),
+                goalTimeSeconds: try legacy.decodeIfPresent(Int.self, forKey: .goalTimeSeconds)
+            )
+        } else {
+            race = try container.decodeIfPresent(Race.self, forKey: .race)
+        }
     }
 }
 

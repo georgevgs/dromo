@@ -49,8 +49,8 @@ struct SyncPlan {
 
     /// Same content at the same time as the plan says now.
     private static func matches(_ entry: ScheduledWorkoutPlan, _ workout: PlannedWorkout) -> Bool {
-        let plannedDate = Calendar.athens.date(from: WorkoutKitConverter.scheduleDate(for: workout))
+        let plannedDate = Calendar.plan.date(from: WorkoutKitConverter.scheduleDate(for: workout))
         return entry.plan == WorkoutKitConverter.workoutPlan(for: workout)
-            && Calendar.athens.date(from: entry.date) == plannedDate
+            && Calendar.plan.date(from: entry.date) == plannedDate
     }
 }

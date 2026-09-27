@@ -1,6 +1,6 @@
 import Foundation
 
-/// A calendar day in the plan's time zone. Stored as components so it never shifts across time zones.
+/// A calendar day, in the phone's time zone. Stored as components so it never shifts across time zones.
 struct PlanDate: Codable, Hashable, Comparable {
     var year: Int
     var month: Int
@@ -17,24 +17,24 @@ extension PlanDate {
     }
 
     init(_ date: Date) {
-        let parts = Calendar.athens.dateComponents([.year, .month, .day], from: date)
+        let parts = Calendar.plan.dateComponents([.year, .month, .day], from: date)
         self.init(year: parts.year!, month: parts.month!, day: parts.day!)
     }
 
     static var today: PlanDate { PlanDate(.now) }
 
-    /// Midnight at the start of this day, Athens time.
+    /// Midnight at the start of this day, local time.
     var startOfDay: Date {
-        Calendar.athens.date(from: DateComponents(year: year, month: month, day: day))!
+        Calendar.plan.date(from: DateComponents(year: year, month: month, day: day))!
     }
 
     func adding(days: Int) -> PlanDate {
-        PlanDate(Calendar.athens.date(byAdding: .day, value: days, to: startOfDay)!)
+        PlanDate(Calendar.plan.date(byAdding: .day, value: days, to: startOfDay)!)
     }
 
     /// Whole days from this date to `other`; negative when `other` is earlier.
     func days(until other: PlanDate) -> Int {
-        Calendar.athens.dateComponents([.day], from: startOfDay, to: other.startOfDay).day!
+        Calendar.plan.dateComponents([.day], from: startOfDay, to: other.startOfDay).day!
     }
 }
 
@@ -44,15 +44,11 @@ struct PlanTime: Codable, Hashable {
     var minute: Int
 }
 
-extension TimeZone {
-    static let athens = TimeZone(identifier: "Europe/Athens")!
-}
-
 extension Calendar {
-    /// Gregorian calendar in Athens time; every plan date is interpreted in it.
-    static let athens: Calendar = {
+    /// Gregorian calendar in the phone's time zone, following it as it changes; every plan date is interpreted in it.
+    static let plan: Calendar = {
         var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = .athens
+        calendar.timeZone = .autoupdatingCurrent
         return calendar
     }()
 }

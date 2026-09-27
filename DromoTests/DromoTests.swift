@@ -7,12 +7,12 @@ import WorkoutKit
 // The rules that, if broken, would silently put the wrong workout on the Watch.
 
 struct PlanTests {
-    let workouts = DefaultPlan.plan.workouts
+    let workouts = BundledPlan.plan.workouts
 
     @Test func eighteenSessionsOnMondaysThursdaysAndSaturdays() {
         #expect(workouts.count == 18)
         #expect(Set(workouts.map(\.id)).count == 18)
-        let weekdays = Set(workouts.map { Calendar.athens.component(.weekday, from: $0.date.startOfDay) })
+        let weekdays = Set(workouts.map { Calendar.plan.component(.weekday, from: $0.date.startOfDay) })
         #expect(weekdays == [2, 5, 7])
     }
 
@@ -37,11 +37,10 @@ struct PlanTests {
         #expect(abs(alert.target.lowerBound.converted(to: .metersPerSecond).value - 1000 / 320) < 0.001)  // 5:20/km
         #expect(abs(alert.target.upperBound.converted(to: .metersPerSecond).value - 1000 / 310) < 0.001)  // 5:10/km
     }
-
 }
 
 struct SyncPlanTests {
-    let workouts = DefaultPlan.plan.workouts
+    let workouts = BundledPlan.plan.workouts
     let saturdayBeforeTheStart = PlanDate(2026, 9, 26)
 
     @Test func fillsTheNextSevenDays() {

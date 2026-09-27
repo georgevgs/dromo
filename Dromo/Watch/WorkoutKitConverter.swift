@@ -18,7 +18,7 @@ enum WorkoutKitConverter {
 
     static func scheduleDate(for workout: PlannedWorkout) -> DateComponents {
         let time = workout.startTime ?? nominalStartTime
-        let date = Calendar.athens.date(from: DateComponents(
+        let date = Calendar.plan.date(from: DateComponents(
             year: workout.date.year,
             month: workout.date.month,
             day: workout.date.day,
@@ -26,7 +26,7 @@ enum WorkoutKitConverter {
             minute: time.minute
         ))!
         // Every component, the same shape Apple's sample passes to schedule(_:at:).
-        return Calendar.athens.dateComponents(in: .athens, from: date)
+        return Calendar.plan.dateComponents(in: Calendar.plan.timeZone, from: date)
     }
 
     private static func customWorkout(for workout: PlannedWorkout) -> CustomWorkout {
@@ -41,12 +41,15 @@ enum WorkoutKitConverter {
     }
 
     private static func block(_ block: SegmentBlock) -> IntervalBlock {
-        IntervalBlock(
-            steps: block.segments.map { segment in
-                IntervalStep(segment.kind == .recovery ? .recovery : .work, step: step(segment))
-            },
-            iterations: block.repeats
-        )
+        IntervalBlock(steps: block.segments.map(intervalStep), iterations: block.repeats)
+    }
+
+    /// Recoveries are recoveries on the Watch; everything else in a block counts as work.
+    private static func intervalStep(_ segment: WorkoutSegment) -> IntervalStep {
+        if segment.kind == .recovery {
+            return IntervalStep(.recovery, step: step(segment))
+        }
+        return IntervalStep(.work, step: step(segment))
     }
 
     private static func step(_ segment: WorkoutSegment) -> WorkoutStep {
@@ -75,7 +78,10 @@ enum WorkoutKitConverter {
         case .race:
             // Race splits go in the name — visible at a glance, never an alert.
             let name = segment.label ?? "Race"
-            return segment.pace.map { "\(name) · \($0.shortText)" } ?? name
+            if let pace = segment.pace {
+                return "\(name) · \(pace.shortText)"
+            }
+            return name
         case .easy:
             return segment.label ?? "Easy"
         case .stride:

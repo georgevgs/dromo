@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKit
+import WorkoutKit
 
 /// Home: the race, the next session, and the whole plan week by week.
 struct PlanView: View {
@@ -12,6 +13,10 @@ struct PlanView: View {
     @State private var isSyncing = false
     @State private var syncNote: String?
     @State private var successfulSyncs = 0
+    @State private var newPlanRequest: NewPlanRequest?
+    @State private var imports = 0
+    /// The title of the plan just replaced, while its undo is on offer.
+    @State private var replacedTitle: String?
 
     var body: some View {
         NavigationStack {
@@ -26,9 +31,8 @@ struct PlanView: View {
                         NavigationLink(value: next.id) {
                             UpNextCard(workout: next, status: status(of: next))
                         }
-                        .listRowBackground(Theme.glass(glowing: SessionType(next).tint))
                     } header: {
-                        SectionTitle("Up Next")
+                        Text("Up Next")
                     } footer: {
                         watchFooter
                     }
@@ -40,25 +44,55 @@ struct PlanView: View {
                             row(for: workout)
                         }
                     } header: {
-                        HStack(alignment: .firstTextBaseline) {
-                            SectionTitle(week.title)
-                            Spacer()
-                            if let range = week.dateRangeText {
-                                Text(range)
-                            }
-                        }
+                        weekHeader(week)
                     }
-                    .listRowBackground(Theme.glass)
                 }
             }
-            .floodlight()
             .navigationTitle(store.plan.title)
             .navigationDestination(for: PlannedWorkout.ID.self) { id in
                 WorkoutDetailView(workoutID: id)
             }
             .toolbar {
+                // Share links stay out of toolbar menus: iOS can't anchor a share sheet to a menu that has
+                // already closed, and crashes. Sync, the one prominent action, stays trailing.
+                ToolbarItem(placement: .primaryAction) {
+                    ShareLink(item: SharedPlan(plan: store.plan), preview: SharePreview(store.plan.title)) {
+                        Label("Share Plan", systemImage: "square.and.arrow.up")
+                    }
+                }
+                ToolbarItem(placement: .primaryAction) {
+                    Button("New Plan", systemImage: "plus") {
+                        newPlanRequest = NewPlanRequest()
+                    }
+                }
                 ToolbarItem(placement: .primaryAction) {
                     syncButton
+                }
+            }
+            .sheet(item: $newPlanRequest) { request in
+                NewPlanView(current: store.plan, fileText: request.fileText) { plan in
+                    replace(with: plan)
+                }
+            }
+            // "Open in Dromo" on a plan file from another app, such as a chat or Files.
+            .onOpenURL { url in
+                newPlanRequest = NewPlanRequest(fileText: openedFileText(url))
+            }
+            .safeAreaBar(edge: .bottom) {
+                if let replacedTitle {
+                    undoBar(replacedTitle)
+                }
+            }
+            // The undo is on offer for ten seconds; replacing again starts the count over.
+            .task(id: replacedTitle) {
+                guard replacedTitle != nil else { return }
+                do {
+                    try await Task.sleep(for: .seconds(10))
+                    withAnimation {
+                        replacedTitle = nil
+                    }
+                } catch {
+                    // Replaced again or undone before the time was up.
                 }
             }
             .refreshable { await refresh() }
@@ -67,6 +101,7 @@ struct PlanView: View {
                 if scenePhase == .active { await refresh() }
             }
             .sensoryFeedback(.success, trigger: successfulSyncs)
+            .sensoryFeedback(.success, trigger: imports)
         }
     }
 
@@ -78,11 +113,36 @@ struct PlanView: View {
             WorkoutRow(workout: workout, status: status)
         }
         .swipeActions(edge: .leading) {
-            Button(status == .completed ? "Not Done" : "Done",
-                   systemImage: status == .completed ? "arrow.uturn.backward" : "checkmark") {
-                store.setCompleted(workout, status != .completed)
+            if status == .completed {
+                Button("Not Done", systemImage: "arrow.uturn.backward") {
+                    store.setCompleted(workout, false)
+                }
+                .tint(Theme.doneAction)
+            } else {
+                Button("Done", systemImage: "checkmark") {
+                    store.setCompleted(workout, true)
+                }
+                .tint(Theme.doneAction)
             }
-            .tint(Theme.doneAction)
+        }
+    }
+
+    /// "Week 1" and its dates on one line, or stacked when they don't fit (large text sizes).
+    private func weekHeader(_ week: TrainingWeek) -> some View {
+        ViewThatFits(in: .horizontal) {
+            HStack {
+                Text(week.title)
+                Spacer()
+                if let range = week.dateRangeText {
+                    Text(range)
+                }
+            }
+            VStack(alignment: .leading, spacing: 2) {
+                Text(week.title)
+                if let range = week.dateRangeText {
+                    Text(range)
+                }
+            }
         }
     }
 
@@ -116,6 +176,63 @@ struct PlanView: View {
         } else {
             Text("Tap \(Image(systemName: "arrow.triangle.2.circlepath")) to put the next 7 days on your Apple Watch. They appear at the top of the Workout app.")
         }
+    }
+
+    // MARK: - New plans
+
+    /// A new plan replaces the old one; if Dromo may already use the Watch, the Watch follows straight away.
+    private func replace(with plan: TrainingPlan) {
+        let oldTitle = store.plan.title
+        store.replace(with: plan)
+        syncNote = nil
+        imports += 1
+        withAnimation {
+            replacedTitle = oldTitle
+        }
+        syncIfAllowed()
+    }
+
+    private func undoReplace() {
+        store.undoReplace()
+        syncNote = nil
+        withAnimation {
+            replacedTitle = nil
+        }
+        syncIfAllowed()
+    }
+
+    /// Only when Dromo already has permission: a replace or undo shouldn't be what asks for it.
+    private func syncIfAllowed() {
+        if watch.authorization == .authorized {
+            Task { await sync() }
+        }
+    }
+
+    private func undoBar(_ title: String) -> some View {
+        HStack(spacing: 12) {
+            Text("Replaced “\(title)”")
+                .font(.subheadline)
+                .lineLimit(2)
+            Spacer(minLength: 0)
+            Button("Undo") {
+                undoReplace()
+            }
+            .fontWeight(.semibold)
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 14)
+        .glassEffect(.regular, in: .capsule)
+        .padding(.horizontal)
+        .padding(.bottom, 8)
+    }
+
+    /// iOS hands an opened file over as a copy in the app's Inbox folder: read it, then tidy it away.
+    private func openedFileText(_ url: URL) -> String {
+        let text = NewPlanView.text(of: url) ?? ""
+        if url.path().hasPrefix(URL.documentsDirectory.path()) {
+            try? FileManager.default.removeItem(at: url)
+        }
+        return text
     }
 
     private func refresh() async {
