@@ -9,8 +9,13 @@ import UniformTypeIdentifiers
 
 @MainActor
 struct ShareTests {
-    @Test func sharingThePlanNeverWaitsForTheMainThread() {
-        #expect(deliversWhileMainThreadWaits(SharedPlan(plan: BundledPlan.plan), as: .json))
+    /// A file already written needs nothing from the app, let alone the main thread.
+    @Test func sharingThePlanHandsOverAFileNamedAfterIt() throws {
+        let plan = BundledPlan.plan
+        SharedPlan.save(plan)
+        let url = SharedPlan.url(for: plan)
+        #expect(url.lastPathComponent == "5K Sub-25.json")
+        #expect(try String(contentsOf: url, encoding: .utf8) == PlanFile.write(plan))
     }
 
     @Test func sharingThePromptNeverWaitsForTheMainThread() {

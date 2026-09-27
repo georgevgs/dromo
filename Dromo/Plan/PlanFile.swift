@@ -23,8 +23,7 @@ enum PlanFile {
         throw Problems(messages: reader.problems)
     }
 
-    /// Nonisolated, for sharing: see `SharedPlan`.
-    nonisolated static func write(_ plan: TrainingPlan) -> String {
+    static func write(_ plan: TrainingPlan) -> String {
         // Only text, numbers, true and lists, so it's always valid JSON. Sorted keys keep the output the same every time.
         let data = try! JSONSerialization.data(
             withJSONObject: Writer.plan(plan),
@@ -475,7 +474,7 @@ enum Parse {
 // MARK: - Writing
 
 /// A plan as the dictionaries and lists `JSONSerialization` writes, in the same format reading takes.
-nonisolated private enum Writer {
+private enum Writer {
     static func plan(_ plan: TrainingPlan) -> [String: Any] {
         var object: [String: Any] = [
             "dromo": 1,

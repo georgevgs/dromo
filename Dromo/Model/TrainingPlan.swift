@@ -2,18 +2,17 @@ import Foundation
 
 // The training plan as plain values, independent of WorkoutKit. The app owns the whole plan;
 // WorkoutKit only ever receives converted copies of single workouts (see `WorkoutKitConverter`).
-// Nonisolated, as plain values should be, so a plan can be written off the main thread (see `SharedPlan`).
 
 // MARK: - Plan
 
-nonisolated struct TrainingPlan: Codable, Hashable {
+struct TrainingPlan: Codable, Hashable {
     var title: String
     /// What the plan builds up to, if anything: a base-building block has no race.
     var race: Race?
     var weeks: [TrainingWeek]
 }
 
-nonisolated struct Race: Codable, Hashable {
+struct Race: Codable, Hashable {
     var name: String
     var date: PlanDate
     var distanceMeters: Int
@@ -38,7 +37,7 @@ extension Race {
     }
 }
 
-nonisolated extension TrainingPlan {
+extension TrainingPlan {
     private enum CodingKeys: String, CodingKey {
         case title, race, weeks
     }
@@ -66,7 +65,7 @@ nonisolated extension TrainingPlan {
     }
 }
 
-nonisolated struct TrainingWeek: Codable, Hashable, Identifiable {
+struct TrainingWeek: Codable, Hashable, Identifiable {
     var id: UUID
     var title: String
     var workouts: [PlannedWorkout]
@@ -74,7 +73,7 @@ nonisolated struct TrainingWeek: Codable, Hashable, Identifiable {
 
 // MARK: - Workout
 
-nonisolated struct PlannedWorkout: Codable, Hashable, Identifiable {
+struct PlannedWorkout: Codable, Hashable, Identifiable {
     /// Also the WorkoutKit plan ID — how a scheduled workout is matched back to the plan.
     var id: UUID
     var date: PlanDate
@@ -104,13 +103,13 @@ extension PlannedWorkout {
 }
 
 /// Segments run `repeats` times in a row, e.g. 6 × (1:30 work + 2:00 recovery).
-nonisolated struct SegmentBlock: Codable, Hashable, Identifiable {
+struct SegmentBlock: Codable, Hashable, Identifiable {
     var id = UUID()
     var repeats = 1
     var segments: [WorkoutSegment]
 }
 
-nonisolated struct WorkoutSegment: Codable, Hashable, Identifiable {
+struct WorkoutSegment: Codable, Hashable, Identifiable {
     enum Kind: String, Codable {
         case warmup, easy, work, stride, recovery, cooldown, race
 
@@ -128,7 +127,7 @@ nonisolated struct WorkoutSegment: Codable, Hashable, Identifiable {
     var label: String?
 }
 
-nonisolated enum SegmentGoal: Codable, Hashable {
+enum SegmentGoal: Codable, Hashable {
     case time(seconds: Int)
     case distance(meters: Int)
     case open
@@ -140,7 +139,7 @@ nonisolated enum SegmentGoal: Codable, Hashable {
 }
 
 /// A pace window in seconds per kilometre, e.g. 310…320 for 5:10–5:20/km.
-nonisolated struct PaceRange: Codable, Hashable {
+struct PaceRange: Codable, Hashable {
     var fastest: Int
     var slowest: Int
 }

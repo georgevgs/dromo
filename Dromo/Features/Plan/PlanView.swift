@@ -56,7 +56,7 @@ struct PlanView: View {
                 // Share links stay out of toolbar menus: iOS can't anchor a share sheet to a menu that has
                 // already closed, and crashes. Sync, the one prominent action, stays trailing.
                 ToolbarItem(placement: .primaryAction) {
-                    ShareLink(item: SharedPlan(plan: store.plan), preview: SharePreview(store.plan.title)) {
+                    ShareLink(item: SharedPlan.url(for: store.plan)) {
                         Label("Share Plan", systemImage: "square.and.arrow.up")
                     }
                 }
@@ -94,6 +94,10 @@ struct PlanView: View {
                 } catch {
                     // Replaced again or undone before the time was up.
                 }
+            }
+            // The file Share hands over, ready before it's tapped.
+            .onChange(of: store.plan, initial: true) {
+                SharedPlan.save(store.plan)
             }
             .refreshable { await refresh() }
             // Whenever the app comes to the front: a plan sent with the share extension,
