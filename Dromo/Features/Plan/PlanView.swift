@@ -53,11 +53,10 @@ struct PlanView: View {
                 WorkoutDetailView(workoutID: id)
             }
             .toolbar {
-                // Share links stay out of toolbar menus: iOS can't anchor a share sheet to a menu that has
-                // already closed, and crashes. Sync, the one prominent action, stays trailing.
+                // Sync, the one prominent action, stays trailing.
                 ToolbarItem(placement: .primaryAction) {
-                    ShareLink(item: SharedPlan.url(for: store.plan)) {
-                        Label("Share Plan", systemImage: "square.and.arrow.up")
+                    Button("Share Plan", systemImage: "square.and.arrow.up") {
+                        sharePlan()
                     }
                 }
                 ToolbarItem(placement: .primaryAction) {
@@ -186,6 +185,16 @@ struct PlanView: View {
         } else {
             Text("Tap \(Image(systemName: "arrow.triangle.2.circlepath")) to put the next 7 days on your Apple Watch. They appear at the top of the Workout app.")
         }
+    }
+
+    // MARK: - Sharing
+
+    /// UIKit's share sheet, presented directly: a ShareLink here sometimes wouldn't open again
+    /// until something else on the screen changed.
+    private func sharePlan() {
+        let sheet = UIActivityViewController(activityItems: [SharedPlan.url(for: store.plan)], applicationActivities: nil)
+        let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+        scene?.keyWindow?.rootViewController?.present(sheet, animated: true)
     }
 
     // MARK: - New plans
