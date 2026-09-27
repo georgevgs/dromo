@@ -2,10 +2,11 @@ import SwiftUI
 import UIKit
 import UniformTypeIdentifiers
 
-/// Opens the New Plan sheet: empty, or with a plan file someone opened in Dromo from another app.
+/// Opens the New Plan sheet: empty, or with a plan shared to Dromo from another app —
+/// a file opened in Dromo, or a chat's reply sent with the share extension.
 struct NewPlanRequest: Identifiable {
     let id = UUID()
-    var fileText: String?
+    var sharedText: String?
 }
 
 /// Brings in a plan an AI chat wrote: copy the prompt for the chat, paste its reply (or choose the file it made),
@@ -13,8 +14,8 @@ struct NewPlanRequest: Identifiable {
 /// confirmation it needs. Sharing the current plan out is the plan screen's Share button, not this sheet.
 struct NewPlanView: View {
     let current: TrainingPlan
-    /// A plan file opened in Dromo from another app, read straight away.
-    let fileText: String?
+    /// A plan shared to Dromo from another app, read straight away.
+    let sharedText: String?
     let onReplace: (TrainingPlan) -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -27,8 +28,8 @@ struct NewPlanView: View {
     var body: some View {
         NavigationStack {
             Form {
-                // A file opened in Dromo is already here; asking the chat is for starting from scratch.
-                if fileText == nil {
+                // A shared plan is already here; asking the chat is for starting from scratch.
+                if sharedText == nil {
                     askSection
                     pasteSection
                 }
@@ -61,8 +62,8 @@ struct NewPlanView: View {
                 readChosenFile(outcome)
             }
             .task {
-                if let fileText {
-                    read(fileText)
+                if let sharedText {
+                    read(sharedText)
                 }
             }
         }
@@ -206,5 +207,5 @@ struct NewPlanView: View {
 }
 
 #Preview {
-    NewPlanView(current: BundledPlan.plan, fileText: nil) { _ in }
+    NewPlanView(current: BundledPlan.plan, sharedText: nil) { _ in }
 }

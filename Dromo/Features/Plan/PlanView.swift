@@ -70,13 +70,13 @@ struct PlanView: View {
                 }
             }
             .sheet(item: $newPlanRequest) { request in
-                NewPlanView(current: store.plan, fileText: request.fileText) { plan in
+                NewPlanView(current: store.plan, sharedText: request.sharedText) { plan in
                     replace(with: plan)
                 }
             }
             // "Open in Dromo" on a plan file from another app, such as a chat or Files.
             .onOpenURL { url in
-                newPlanRequest = NewPlanRequest(fileText: openedFileText(url))
+                newPlanRequest = NewPlanRequest(sharedText: openedFileText(url))
             }
             .safeAreaBar(edge: .bottom) {
                 if let replacedTitle {
@@ -96,9 +96,15 @@ struct PlanView: View {
                 }
             }
             .refreshable { await refresh() }
-            // Picks up sessions completed on the Watch whenever the app comes back to the foreground.
+            // Whenever the app comes to the front: a plan sent with the share extension,
+            // and sessions completed on the Watch.
             .task(id: scenePhase) {
-                if scenePhase == .active { await refresh() }
+                if scenePhase == .active {
+                    if let text = PlanInbox.take() {
+                        newPlanRequest = NewPlanRequest(sharedText: text)
+                    }
+                    await refresh()
+                }
             }
             .sensoryFeedback(.success, trigger: successfulSyncs)
             .sensoryFeedback(.success, trigger: imports)
