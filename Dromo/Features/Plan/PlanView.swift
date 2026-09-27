@@ -225,8 +225,8 @@ struct PlanView: View {
             }
             .fontWeight(.semibold)
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 14)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
         .glassEffect(.regular, in: .capsule)
         .padding(.horizontal)
         .padding(.bottom, 8)
