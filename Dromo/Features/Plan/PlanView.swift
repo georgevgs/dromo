@@ -26,8 +26,9 @@ struct PlanView: View {
                         NavigationLink(value: next.id) {
                             UpNextCard(workout: next, status: status(of: next))
                         }
+                        .listRowBackground(Theme.glass(glowing: SessionType(next).tint))
                     } header: {
-                        Text("Up Next")
+                        SectionTitle("Up Next")
                     } footer: {
                         watchFooter
                     }
@@ -39,16 +40,18 @@ struct PlanView: View {
                             row(for: workout)
                         }
                     } header: {
-                        HStack {
-                            Text(week.title)
+                        HStack(alignment: .firstTextBaseline) {
+                            SectionTitle(week.title)
                             Spacer()
                             if let range = week.dateRangeText {
                                 Text(range)
                             }
                         }
                     }
+                    .listRowBackground(Theme.glass)
                 }
             }
+            .floodlight()
             .navigationTitle(store.plan.title)
             .navigationDestination(for: PlannedWorkout.ID.self) { id in
                 WorkoutDetailView(workoutID: id)
@@ -79,7 +82,7 @@ struct PlanView: View {
                    systemImage: status == .completed ? "arrow.uturn.backward" : "checkmark") {
                 store.setCompleted(workout, status != .completed)
             }
-            .tint(.done)
+            .tint(Theme.doneAction)
         }
     }
 
@@ -91,6 +94,8 @@ struct PlanView: View {
         }
         .symbolEffect(.rotate, isActive: isSyncing && !reduceMotion)
         .buttonStyle(.glassProminent)
+        .tint(.accentFill)
+        .foregroundStyle(.onAccent)
         .disabled(isSyncing || !watch.isSupported || watch.isDenied)
     }
 

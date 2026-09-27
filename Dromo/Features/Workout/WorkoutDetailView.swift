@@ -28,33 +28,38 @@ struct WorkoutDetailView: View {
             }
             .listRowBackground(Color.clear)
 
-            Section("Structure") {
-                StructureChart(workout: workout, height: 64)
-                    .padding(.vertical, 8)
-            }
+            Group {
+                Section("Structure") {
+                    StructureChart(workout: workout, height: 64)
+                        .padding(.vertical, 8)
+                }
 
-            if let warmup = workout.warmup {
-                Section("Warm-up") { StepRow(segment: warmup) }
-            }
-            ForEach(workout.blocks) { block in
-                Section {
-                    ForEach(block.segments) { StepRow(segment: $0) }
-                } header: {
-                    BlockHeader(block: block)
+                if let warmup = workout.warmup {
+                    Section("Warm-up") { StepRow(segment: warmup) }
+                }
+                ForEach(workout.blocks) { block in
+                    Section {
+                        ForEach(block.segments) { StepRow(segment: $0) }
+                    } header: {
+                        BlockHeader(block: block)
+                    }
+                }
+                if let cooldown = workout.cooldown {
+                    Section("Cool-down") { StepRow(segment: cooldown) }
+                }
+
+                if let notes = workout.notes {
+                    Section("Notes") {
+                        Text(notes)
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
-            if let cooldown = workout.cooldown {
-                Section("Cool-down") { StepRow(segment: cooldown) }
-            }
-
-            if let notes = workout.notes {
-                Section("Notes") {
-                    Text(notes)
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                }
-            }
+            .listRowBackground(Theme.glass)
         }
+        // The session glows in its type's colour: heat, ice or ultraviolet.
+        .floodlight(glow: SessionType(workout).tint, secondGlow: .clear)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
@@ -97,6 +102,8 @@ struct WorkoutDetailView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.glassProminent)
+                .tint(.accentFill)
+                .foregroundStyle(.onAccent)
                 .disabled(isScheduling)
 
                 Button("Preview", systemImage: "eye") {

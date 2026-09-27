@@ -16,56 +16,60 @@ struct EditWorkoutView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section {
-                    StructureChart(workout: draft, height: 48)
-                        .padding(.vertical, 8)
-                } footer: {
-                    Text("≈ \(DurationText.approximate(draft.estimatedSeconds)) · ≈ \(DistanceText.kilometers(draft.estimatedMeters))")
-                }
-
-                Section("Name") {
-                    TextField("Title", text: $draft.title)
-                }
-
-                if draft.warmup != nil {
+                Group {
                     Section {
-                        SegmentEditor(segment: Binding($draft.warmup)!)
-                    }
-                }
-                ForEach($draft.blocks) { $block in
-                    Section {
-                        if block.repeats > 1 || block.segments.count > 1 {
-                            Stepper(value: $block.repeats, in: 1...20) {
-                                LabeledContent("Rounds", value: block.repeats, format: .number)
-                            }
-                        }
-                        ForEach($block.segments) { $segment in
-                            SegmentEditor(segment: $segment)
-                        }
-                    } header: {
-                        BlockHeader(block: block)
-                    }
-                }
-                if draft.cooldown != nil {
-                    Section {
-                        SegmentEditor(segment: Binding($draft.cooldown)!)
-                    }
-                }
-
-                Section("Notes") {
-                    TextField("Notes", text: notes, axis: .vertical)
-                }
-
-                if let original = DefaultPlan.workout(id: draft.id) {
-                    Section {
-                        Button("Restore Original", systemImage: "arrow.counterclockwise") {
-                            draft = original
-                        }
+                        StructureChart(workout: draft, height: 48)
+                            .padding(.vertical, 8)
                     } footer: {
-                        Text("Puts back the plan's original version of this session. Takes effect when you save.")
+                        Text("≈ \(DurationText.approximate(draft.estimatedSeconds)) · ≈ \(DistanceText.kilometers(draft.estimatedMeters))")
+                    }
+
+                    Section("Name") {
+                        TextField("Title", text: $draft.title)
+                    }
+
+                    if draft.warmup != nil {
+                        Section {
+                            SegmentEditor(segment: Binding($draft.warmup)!)
+                        }
+                    }
+                    ForEach($draft.blocks) { $block in
+                        Section {
+                            if block.repeats > 1 || block.segments.count > 1 {
+                                Stepper(value: $block.repeats, in: 1...20) {
+                                    LabeledContent("Rounds", value: block.repeats, format: .number)
+                                }
+                            }
+                            ForEach($block.segments) { $segment in
+                                SegmentEditor(segment: $segment)
+                            }
+                        } header: {
+                            BlockHeader(block: block)
+                        }
+                    }
+                    if draft.cooldown != nil {
+                        Section {
+                            SegmentEditor(segment: Binding($draft.cooldown)!)
+                        }
+                    }
+
+                    Section("Notes") {
+                        TextField("Notes", text: notes, axis: .vertical)
+                    }
+
+                    if let original = DefaultPlan.workout(id: draft.id) {
+                        Section {
+                            Button("Restore Original", systemImage: "arrow.counterclockwise") {
+                                draft = original
+                            }
+                        } footer: {
+                            Text("Puts back the plan's original version of this session. Takes effect when you save.")
+                        }
                     }
                 }
+                .listRowBackground(Theme.glass)
             }
+            .floodlight(glow: SessionType(draft).tint, secondGlow: .clear)
             .navigationTitle("Edit Session")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -73,8 +77,15 @@ struct EditWorkoutView: View {
                     Button("Cancel", role: .cancel) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save", role: .confirm) { save() }
-                        .disabled(draft.title.trimmingCharacters(in: .whitespaces).isEmpty)
+                    Button(role: .confirm) {
+                        save()
+                    } label: {
+                        // Night ink on volt in both appearances; the system would pick white in Light Mode.
+                        Text("Save").foregroundStyle(.onAccent)
+                    }
+                    .buttonStyle(.glassProminent)
+                    .tint(.accentFill)
+                    .disabled(draft.title.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
             }
         }

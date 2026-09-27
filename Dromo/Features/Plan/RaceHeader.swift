@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// The race at a glance — countdown, goal and progress through the plan — under the Golden Hour sky of the app icon.
+/// The race at a glance — countdown, goal and progress through the plan — under the night sky of the app icon.
 struct RaceHeader: View {
     let plan: TrainingPlan
     let progress: [[PlanProgress.Session]]
@@ -37,7 +37,7 @@ struct RaceHeader: View {
         case 1...:
             AdaptiveStack(alignment: .firstTextBaseline, spacing: 8) {
                 Text(days, format: .number)
-                    .font(.system(size: countdownSize, weight: .heavy).width(.expanded))
+                    .font(.system(size: countdownSize, weight: .black).width(.expanded))
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
                 Text(days == 1 ? "day to race" : "days to race")
@@ -47,7 +47,7 @@ struct RaceHeader: View {
             .accessibilityElement(children: .combine)
         default:
             Text(days == 0 ? "Race day" : "Finished")
-                .font(.system(size: countdownSize * 0.75, weight: .heavy).width(.expanded))
+                .font(.system(size: countdownSize * 0.75, weight: .black).width(.expanded))
         }
     }
 

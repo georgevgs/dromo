@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// The next session to run: what it is, its shape, how long it takes and whether it's on the Watch.
+/// Its glass glows in the session's colour (see `Theme.glass(glowing:)`).
 struct UpNextCard: View {
     let workout: PlannedWorkout
     let status: WorkoutStatus
@@ -14,7 +15,7 @@ struct UpNextCard: View {
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(workout.date == .today ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
                     Text(workout.title)
-                        .font(.display(.title3))
+                        .font(.display(.title2, weight: .heavy))
                 }
                 Spacer(minLength: 0)
                 StatusIcon(status: status)
